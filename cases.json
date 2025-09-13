@@ -48,7 +48,10 @@
     { "id": 46, "title": "혈변", "category": "소화기", "subChecklist": [] },
     { "id": 47, "title": "호흡곤란", "category": "호흡기", "subChecklist": [] },
     { "id": 48, "title": "황달", "category": "소화기", "subChecklist": [] }
-  ]
+  ],
+  "categorySubChecklists": {
+    "소화기": ["소화불량", "속쓰림", "혈변", "지압변", "황달"]
+  }
 }
 
 

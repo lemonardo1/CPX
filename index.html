@@ -254,6 +254,7 @@
             let savedChecklist = {};
             let CASES = [];
             let CASES_BY_ID = {};
+            let CATEGORY_SUB_CHECKLISTS = {};
             let currentSelectedCaseId = '';
             const SUB_STORAGE_KEY = 'twelveMinuteSubChecklist.v1';
             let subChecklistStateByCaseId = {};
@@ -420,6 +421,7 @@
                         category: c.category || '기타',
                         subChecklist: Array.isArray(c.subChecklist) ? c.subChecklist : []
                     }));
+                    CATEGORY_SUB_CHECKLISTS = (data && typeof data.categorySubChecklists === 'object' && data.categorySubChecklists) || {};
                 } catch (e) {
                     // Fallback to inline list if fetch fails (e.g., opened via file://)
                     CASES = [
@@ -472,6 +474,9 @@
                         { id: '47', title: '호흡곤란', category: '호흡기', subChecklist: [] },
                         { id: '48', title: '황달', category: '소화기', subChecklist: [] }
                     ];
+                    CATEGORY_SUB_CHECKLISTS = {
+                        '소화기': ['소화불량', '속쓰림', '혈변', '지압변', '황달']
+                    };
                 }
                 // Sort by category order, then by title
                 const orderIndex = new Map(CATEGORY_ORDER.map((c, i) => [c, i]));
@@ -543,7 +548,9 @@
                 if (!subChecklistSection || !subChecklistGrid) return;
                 const cid = currentSelectedCaseId;
                 const caseObj = cid ? CASES_BY_ID[cid] : null;
-                const items = caseObj && Array.isArray(caseObj.subChecklist) ? caseObj.subChecklist : [];
+                const catItems = caseObj && CATEGORY_SUB_CHECKLISTS && Array.isArray(CATEGORY_SUB_CHECKLISTS[caseObj.category]) ? CATEGORY_SUB_CHECKLISTS[caseObj.category] : [];
+                const caseItems = caseObj && Array.isArray(caseObj.subChecklist) ? caseObj.subChecklist : [];
+                const items = Array.from(new Set([...catItems, ...caseItems].filter(Boolean)));
                 subChecklistGrid.innerHTML = '';
                 if (!items.length) {
                     subChecklistSection.hidden = true;
