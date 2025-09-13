@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>12분 타이머</title>
+    <style>
+        :root {
+            color-scheme: light dark;
+            --bg: #0b0c10;
+            --fg: #eaeef3;
+            --muted: #9aa4af;
+            --accent: #4f8cff;
+            --accent-strong: #316cff;
+            --btn-bg: #1a1d24;
+            --btn-border: #2a2f3a;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg: #ffffff;
+                --fg: #0b0c10;
+                --muted: #51606f;
+                --accent: #1e66ff;
+                --accent-strong: #0b57f0;
+                --btn-bg: #f6f8fa;
+                --btn-border: #e2e8f0;
+            }
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+            background: radial-gradient(1200px 800px at 70% -10%, rgba(79, 140, 255, 0.15), transparent 60%), var(--bg);
+            color: var(--fg);
+            display: grid;
+            place-items: center;
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 640px;
+            padding: 24px;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: clamp(18px, 2.4vw, 24px);
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .time {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 2px;
+            font-size: clamp(64px, 14vw, 140px);
+            line-height: 1.1;
+            font-weight: 700;
+            margin: 12px 0 4px;
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .controls {
+            margin-top: 28px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            cursor: pointer;
+            border: 1px solid var(--btn-border);
+            background: var(--btn-bg);
+            color: var(--fg);
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            border-color: color-mix(in oklch, var(--btn-border) 60%, var(--accent) 40%);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .primary {
+            background: linear-gradient(180deg, color-mix(in oklch, var(--accent) 70%, var(--fg) 30%), var(--accent-strong));
+            border-color: color-mix(in oklch, var(--accent-strong) 70%, black 30%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(49, 108, 255, 0.25);
+        }
+
+        .primary:hover {
+            filter: brightness(1.03);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .case-select {
+            margin-top: 28px;
+            text-align: left;
+        }
+
+        .case-select .title {
+            margin: 0 0 8px;
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .case-select select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--btn-border);
+            background: var(--btn-bg);
+            color: var(--fg);
+            font-size: 15px;
+        }
+
+        .checklist {
+            margin-top: 28px;
+            text-align: left;
+        }
+
+        .checklist .title {
+            margin: 0 0 12px;
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .checklist .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+            gap: 10px;
+        }
+
+        .checklist .check-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--btn-border);
+            background: var(--btn-bg);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+        }
+
+        .sub-checklist {
+            margin-top: 18px;
+            text-align: left;
+        }
+
+        .sub-checklist .title {
+            margin: 0 0 10px;
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .sub-checklist .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .sub-checklist .check-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--btn-border);
+            background: var(--btn-bg);
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
+    <meta name="theme-color" content="#1e66ff">
+</head>
+<body>
+    <div class="container">
+        <h1>12분 타이머</h1>
+        <div id="time" class="time" aria-live="polite" role="timer" aria-atomic="true">12:00</div>
+        <div class="hint">스페이스: 시작/일시정지 · R: 리셋</div>
+        <div class="controls" aria-label="타이머 컨트롤">
+            <button id="startPauseBtn" class="primary" aria-pressed="false">시작</button>
+            <button id="finishSaveBtn" aria-label="종료 및 저장">종료</button>
+            <button id="resetBtn" aria-label="리셋">리셋</button>
+            <button id="exportJsonBtn" aria-label="JSON 내보내기">내보내기(JSON)</button>
+        </div>
+        <div class="case-select" aria-label="증례 선택 구역">
+            <label for="caseSelect" class="title">증례 선택</label>
+            <select id="caseSelect" name="caseSelect" aria-label="증례 선택"></select>
+        </div>
+        <div class="sub-checklist" aria-labelledby="subchecklist-title" id="subChecklistSection" hidden>
+            <h2 id="subchecklist-title" class="title">세부 체크리스트</h2>
+            <div class="grid" id="subChecklistGrid" role="group" aria-label="세부 체크리스트"></div>
+        </div>
+        <div class="checklist" aria-labelledby="checklist-title">
+            <h2 id="checklist-title" class="title">체크리스트</h2>
+            <div class="grid" id="checklistGrid" role="group" aria-label="오늘의 체크리스트"></div>
+        </div>
+    </div>
+
+    <script>
+        (async function () {
+            const INITIAL_SECONDS = 12 * 60;
+            let remainingSeconds = INITIAL_SECONDS;
+            let timerId = null;
+            let isRunning = false;
+
+            const timeEl = document.getElementById('time');
+            const startPauseBtn = document.getElementById('startPauseBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const checklistGrid = document.getElementById('checklistGrid');
+            const finishSaveBtn = document.getElementById('finishSaveBtn');
+            const caseSelect = document.getElementById('caseSelect');
+            const subChecklistSection = document.getElementById('subChecklistSection');
+            const subChecklistGrid = document.getElementById('subChecklistGrid');
+            const exportJsonBtn = document.getElementById('exportJsonBtn');
+            let savedChecklist = {};
+            let CASES = [];
+            let CASES_BY_ID = {};
+            let currentSelectedCaseId = '';
+            const SUB_STORAGE_KEY = 'twelveMinuteSubChecklist.v1';
+            let subChecklistStateByCaseId = {};
+            const CATEGORY_ORDER = ['소화기','순환기','호흡기','신장비뇨','전신','근골격/관절','정신/신경','여성/소아','상담'];
+            try {
+                subChecklistStateByCaseId = JSON.parse(localStorage.getItem(SUB_STORAGE_KEY) || '{}') || {};
+            } catch (_) {
+                subChecklistStateByCaseId = {};
+            }
+
+            function formatTime(totalSeconds) {
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            }
+
+            function updateDisplay() {
+                timeEl.textContent = formatTime(remainingSeconds);
+                document.title = (isRunning ? formatTime(remainingSeconds) + ' · ' : '') + '12분 타이머';
+            }
+
+            function playBeep(patternCount = 3) {
+                try {
+                    const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioContextCtor) return;
+                    const ctx = new AudioContextCtor();
+                    let t = ctx.currentTime;
+                    for (let i = 0; i < patternCount; i++) {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = 880;
+                        gain.gain.setValueAtTime(0.001, t);
+                        gain.gain.exponentialRampToValueAtTime(0.25, t + 0.01);
+                        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+                        osc.connect(gain).connect(ctx.destination);
+                        osc.start(t);
+                        osc.stop(t + 0.35);
+                        t += 0.5;
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            }
+
+            function vibrateAlert() {
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200, 100, 300]);
+                }
+            }
+
+            function onComplete() {
+                playBeep();
+                vibrateAlert();
+            }
+
+            function tick() {
+                if (remainingSeconds <= 0) {
+                    clearInterval(timerId);
+                    timerId = null;
+                    isRunning = false;
+                    timeEl.textContent = '00:00';
+                    document.title = '완료! · 12분 타이머';
+                    startPauseBtn.textContent = '다시 시작';
+                    startPauseBtn.setAttribute('aria-pressed', 'false');
+                    onComplete();
+                    return;
+                }
+                remainingSeconds -= 1;
+                updateDisplay();
+            }
+
+            function start() {
+                if (isRunning) return;
+                if (remainingSeconds <= 0) remainingSeconds = INITIAL_SECONDS;
+                isRunning = true;
+                startPauseBtn.textContent = '일시정지';
+                startPauseBtn.setAttribute('aria-pressed', 'true');
+                updateDisplay();
+                timerId = setInterval(tick, 1000);
+            }
+
+            function pause() {
+                if (!isRunning) return;
+                isRunning = false;
+                startPauseBtn.textContent = '계속';
+                startPauseBtn.setAttribute('aria-pressed', 'false');
+                if (timerId) {
+                    clearInterval(timerId);
+                    timerId = null;
+                }
+                updateDisplay();
+            }
+
+            function reset() {
+                if (timerId) {
+                    clearInterval(timerId);
+                    timerId = null;
+                }
+                remainingSeconds = INITIAL_SECONDS;
+                isRunning = false;
+                startPauseBtn.textContent = '시작';
+                startPauseBtn.setAttribute('aria-pressed', 'false');
+                // Clear main checklist
+                try {
+                    savedChecklist = {};
+                    if (typeof STORAGE_KEY !== 'undefined') {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(savedChecklist));
+                    }
+                } catch (_) {}
+                if (typeof renderChecklist === 'function') {
+                    renderChecklist();
+                }
+                // Clear sub-checklist for current case only
+                try {
+                    if (currentSelectedCaseId) {
+                        delete subChecklistStateByCaseId[currentSelectedCaseId];
+                        if (typeof SUB_STORAGE_KEY !== 'undefined') {
+                            localStorage.setItem(SUB_STORAGE_KEY, JSON.stringify(subChecklistStateByCaseId));
+                        }
+                    }
+                } catch (_) {}
+                if (typeof renderSubChecklist === 'function') {
+                    renderSubChecklist();
+                }
+                updateDisplay();
+            }
+
+            function toggleStartPause() {
+                isRunning ? pause() : start();
+            }
+
+            startPauseBtn.addEventListener('click', toggleStartPause);
+            resetBtn.addEventListener('click', reset);
+            finishSaveBtn.addEventListener('click', finishAndSave);
+            exportJsonBtn.addEventListener('click', exportSessionsJson);
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') updateDisplay();
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    toggleStartPause();
+                } else if (e.key.toLowerCase() === 'r') {
+                    reset();
+                }
+            });
+
+            updateDisplay();
+
+            // Case select from JSON
+            const CASE_STORAGE_KEY = 'twelveMinuteCase.v1';
+            async function loadCasesFromJson() {
+                try {
+                    const res = await fetch('cases.json', { cache: 'no-store' });
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    const data = await res.json();
+                    if (!data || !Array.isArray(data.cases)) throw new Error('Invalid data');
+                    CASES = data.cases.map(c => ({
+                        id: String(c.id),
+                        title: c.title,
+                        category: c.category || '기타',
+                        subChecklist: Array.isArray(c.subChecklist) ? c.subChecklist : []
+                    }));
+                } catch (e) {
+                    // Fallback to inline list if fetch fails (e.g., opened via file://)
+                    CASES = [
+                        { id: '1', title: '소변량 변화(다뇨증/핍뇨)', category: '신장비뇨', subChecklist: [] },
+                        { id: '2', title: '목 통증/허리 통증', category: '근골격/관절', subChecklist: [] },
+                        { id: '3', title: '가슴 통증', category: '순환기', subChecklist: [] },
+                        { id: '4', title: '가정 폭력/성폭력', category: '상담', subChecklist: [] },
+                        { id: '5', title: '객혈', category: '호흡기', subChecklist: [] },
+                        { id: '6', title: '경련', category: '정신/신경', subChecklist: [] },
+                        { id: '7', title: '고혈압', category: '순환기', subChecklist: [] },
+                        { id: '8', title: '관절 통증/부기', category: '근골격/관절', subChecklist: [] },
+                        { id: '9', title: '구토', category: '소화기', subChecklist: [] },
+                        { id: '10', title: '근력/감각 이상', category: '정신/신경', subChecklist: [] },
+                        { id: '11', title: '기분 변화', category: '정신/신경', subChecklist: [] },
+                        { id: '12', title: '기억력 저하', category: '정신/신경', subChecklist: [] },
+                        { id: '13', title: '기침', category: '호흡기', subChecklist: [] },
+                        { id: '14', title: '나쁜 소식 전하기', category: '상담', subChecklist: [] },
+                        { id: '15', title: '두근거림', category: '순환기', subChecklist: [] },
+                        { id: '16', title: '두통', category: '정신/신경', subChecklist: [] },
+                        { id: '17', title: '떨림/운동이상', category: '정신/신경', subChecklist: [] },
+                        { id: '18', title: '물질오남용', category: '상담', subChecklist: [] },
+                        { id: '19', title: '발열', category: '전신', subChecklist: [] },
+                        { id: '20', title: '배뇨 이상', category: '신장비뇨', subChecklist: [] },
+                        { id: '21', title: '배변이상(변비/설사)', category: '소화기', subChecklist: [] },
+                        { id: '22', title: '복통', category: '소화기', subChecklist: [] },
+                        { id: '23', title: '불안', category: '정신/신경', subChecklist: [] },
+                        { id: '24', title: '붉은색 소변', category: '신장비뇨', subChecklist: ['소변양'] },
+                        { id: '25', title: '산전 진찰', category: '여성/소아', subChecklist: [] },
+                        { id: '26', title: '성장/발달 지연', category: '여성/소아', subChecklist: [] },
+                        { id: '27', title: '소화불량', category: '소화기', subChecklist: [] },
+                        { id: '28', title: '수면장애', category: '정신/신경', subChecklist: [] },
+                        { id: '29', title: '쉽게 멍이 듦', category: '전신', subChecklist: [] },
+                        { id: '30', title: '실신', category: '순환기', subChecklist: [] },
+                        { id: '31', title: '어지럼', category: '정신/신경', subChecklist: [] },
+                        { id: '32', title: '예방접종', category: '여성/소아', subChecklist: [] },
+                        { id: '33', title: '월경이상/월경통', category: '여성/소아', subChecklist: [] },
+                        { id: '34', title: '유방통/유방덩이(멍울)', category: '여성/소아', subChecklist: [] },
+                        { id: '35', title: '음주/금연 상담', category: '상담', subChecklist: [] },
+                        { id: '36', title: '의식장애', category: '정신/신경', subChecklist: [] },
+                        { id: '37', title: '이상 지질혈증', category: '순환기', subChecklist: [] },
+                        { id: '38', title: '자살', category: '정신/신경', subChecklist: [] },
+                        { id: '39', title: '질 분비물/질 출혈', category: '여성/소아', subChecklist: [] },
+                        { id: '40', title: '체중 감소', category: '전신', subChecklist: [] },
+                        { id: '41', title: '체중 증가/비만', category: '전신', subChecklist: [] },
+                        { id: '42', title: '콧물/코막힘', category: '호흡기', subChecklist: [] },
+                        { id: '43', title: '토혈', category: '소화기', subChecklist: [] },
+                        { id: '44', title: '피로', category: '전신', subChecklist: [] },
+                        { id: '45', title: '피부 발진', category: '전신', subChecklist: [] },
+                        { id: '46', title: '혈변', category: '소화기', subChecklist: [] },
+                        { id: '47', title: '호흡곤란', category: '호흡기', subChecklist: [] },
+                        { id: '48', title: '황달', category: '소화기', subChecklist: [] }
+                    ];
+                }
+                // Sort by category order, then by title
+                const orderIndex = new Map(CATEGORY_ORDER.map((c, i) => [c, i]));
+                CASES.sort((a, b) => {
+                    const ai = orderIndex.has(a.category) ? orderIndex.get(a.category) : 999;
+                    const bi = orderIndex.has(b.category) ? orderIndex.get(b.category) : 999;
+                    if (ai !== bi) return ai - bi;
+                    return a.title.localeCompare(b.title);
+                });
+                CASES_BY_ID = CASES.reduce((acc, c) => { acc[c.id] = c; return acc; }, {});
+            }
+
+            function renderCaseSelect() {
+                if (!caseSelect) return;
+                caseSelect.innerHTML = '';
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = 'CPX';
+                caseSelect.appendChild(placeholder);
+
+                // Group by category using optgroups with specified order
+                const groups = new Map();
+                CASES.forEach(c => {
+                    const cat = c.category || '기타';
+                    if (!groups.has(cat)) groups.set(cat, []);
+                    groups.get(cat).push(c);
+                });
+                const orderedCats = Array.from(groups.keys()).sort((a, b) => {
+                    const ai = CATEGORY_ORDER.indexOf(a);
+                    const bi = CATEGORY_ORDER.indexOf(b);
+                    const aa = ai === -1 ? 999 : ai;
+                    const bb = bi === -1 ? 999 : bi;
+                    if (aa !== bb) return aa - bb;
+                    return a.localeCompare(b);
+                });
+                let runningIndex = 1;
+                orderedCats.forEach(cat => {
+                    const og = document.createElement('optgroup');
+                    og.label = cat;
+                    const list = groups.get(cat).slice().sort((a, b) => a.title.localeCompare(b.title));
+                    list.forEach(c => {
+                        const option = document.createElement('option');
+                        option.value = c.id;
+                        option.textContent = (runningIndex++) + '. ' + c.title;
+                        og.appendChild(option);
+                    });
+                    caseSelect.appendChild(og);
+                });
+
+                const saved = localStorage.getItem(CASE_STORAGE_KEY);
+                if (saved && caseSelect.querySelector('option[value="' + saved + '"]')) {
+                    caseSelect.value = saved;
+                } else {
+                    caseSelect.value = '';
+                }
+
+                caseSelect.addEventListener('change', () => {
+                    const val = caseSelect.value;
+                    currentSelectedCaseId = val || '';
+                    try {
+                        if (val) localStorage.setItem(CASE_STORAGE_KEY, val);
+                        else localStorage.removeItem(CASE_STORAGE_KEY);
+                    } catch (_) {}
+                    renderSubChecklist();
+                });
+            }
+
+            function renderSubChecklist() {
+                if (!subChecklistSection || !subChecklistGrid) return;
+                const cid = currentSelectedCaseId;
+                const caseObj = cid ? CASES_BY_ID[cid] : null;
+                const items = caseObj && Array.isArray(caseObj.subChecklist) ? caseObj.subChecklist : [];
+                subChecklistGrid.innerHTML = '';
+                if (!items.length) {
+                    subChecklistSection.hidden = true;
+                    return;
+                }
+                subChecklistSection.hidden = false;
+
+                const savedForCase = (subChecklistStateByCaseId[cid] || {});
+                items.forEach((label, index) => {
+                    const id = 'subchk_' + cid + '_' + index;
+                    const item = document.createElement('label');
+                    item.className = 'check-item';
+
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = id;
+                    input.checked = Boolean(savedForCase[label]);
+                    input.setAttribute('aria-label', label + ' 체크');
+                    input.addEventListener('change', () => {
+                        if (!subChecklistStateByCaseId[cid]) subChecklistStateByCaseId[cid] = {};
+                        subChecklistStateByCaseId[cid][label] = input.checked;
+                        try { localStorage.setItem(SUB_STORAGE_KEY, JSON.stringify(subChecklistStateByCaseId)); } catch (_) {}
+                    });
+
+                    const text = document.createElement('span');
+                    text.textContent = label;
+
+                    item.appendChild(input);
+                    item.appendChild(text);
+                    subChecklistGrid.appendChild(item);
+                });
+            }
+
+            async function initCases() {
+                await loadCasesFromJson();
+                renderCaseSelect();
+                currentSelectedCaseId = caseSelect.value || '';
+                renderSubChecklist();
+            }
+
+            // Checklist
+            const CHECKLIST_LABELS = [
+                'O','L','D','Co','Ex','C','A','F','E','외','과','약','사','가','여','P/E'
+            ];
+            const STORAGE_KEY = 'twelveMinuteChecklist.v1';
+            try {
+                savedChecklist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') || {};
+            } catch (_) {
+                savedChecklist = {};
+            }
+
+            function renderChecklist() {
+                if (!checklistGrid) return;
+                checklistGrid.innerHTML = '';
+                CHECKLIST_LABELS.forEach((label, index) => {
+                    const id = 'chk_' + index;
+                    const item = document.createElement('label');
+                    item.className = 'check-item';
+
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = id;
+                    input.checked = Boolean(savedChecklist[label]);
+                    input.setAttribute('aria-label', label + ' 체크');
+                    input.addEventListener('change', () => {
+                        savedChecklist[label] = input.checked;
+                        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(savedChecklist)); } catch (_) {}
+                    });
+
+                    const text = document.createElement('span');
+                    text.textContent = label;
+
+                    item.appendChild(input);
+                    item.appendChild(text);
+                    checklistGrid.appendChild(item);
+                });
+            }
+
+            renderChecklist();
+
+            // End (Save) session
+            function finishAndSave() {
+                if (isRunning) pause();
+                const elapsedSeconds = Math.max(0, INITIAL_SECONDS - remainingSeconds);
+                const caseValue = caseSelect ? caseSelect.value : '';
+                const caseObj = caseValue ? CASES_BY_ID[caseValue] : null;
+                const caseIndex = caseObj ? (CASES.findIndex(c => c.id === caseObj.id) + 1) : null;
+                const caseLabel = caseObj ? caseObj.title : null;
+                const subChecklistState = caseObj ? (subChecklistStateByCaseId[caseObj.id] || {}) : {};
+                const session = {
+                    id: Date.now(),
+                    timestamp: new Date().toISOString(),
+                    elapsedSeconds,
+                    remainingSeconds,
+                    checklist: savedChecklist || {},
+                    selectedCaseId: caseObj ? caseObj.id : null,
+                    selectedCaseIndex: caseIndex,
+                    selectedCaseLabel: caseLabel,
+                    subChecklist: subChecklistState
+                };
+                try {
+                    const HISTORY_KEY = 'twelveMinuteSessions.v1';
+                    const list = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+                    list.push(session);
+                    localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+                } catch (_) {}
+
+                // Send final checked items to local log endpoint; fallback to download
+                try {
+                    const exportData = {
+                        case: caseLabel || null,
+                        checklist: {
+                            main: savedChecklist || {},
+                            sub: subChecklistState || {}
+                        }
+                    };
+                    fetch('/log', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(exportData)
+                    }).catch(() => {
+                        try {
+                            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            const isoDate = new Date().toISOString().slice(0,10);
+                            a.download = 'cpx_final_' + isoDate + '.json';
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            setTimeout(() => URL.revokeObjectURL(url), 1500);
+                        } catch (_) {}
+                    });
+                } catch (_) {}
+
+                playBeep(1);
+                if (navigator.vibrate) navigator.vibrate(80);
+            }
+
+            function exportSessionsJson() {
+                try {
+                    const HISTORY_KEY = 'twelveMinuteSessions.v1';
+                    const list = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+                    const minimal = list.map(s => ({
+                        case: s.selectedCaseLabel || null,
+                        checklist: {
+                            main: s.checklist || {},
+                            sub: s.subChecklist || {}
+                        }
+                    }));
+                    const blob = new Blob([JSON.stringify(minimal, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    const isoDate = new Date().toISOString().slice(0,10);
+                    a.download = 'cpx_sessions_' + isoDate + '.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 1500);
+                } catch (_) {
+                    // ignore
+                }
+            }
+            await initCases();
+        })();
+    </script>
+    <noscript>이 페이지는 자바스크립트를 필요로 합니다.</noscript>
+</body>
+<!-- Made with ❤ for focus -->
+</html>
+
+
