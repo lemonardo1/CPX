@@ -34,7 +34,12 @@ app.get('/healthz', (_req, res) => {
 app.post('/log', async (req, res) => {
   try {
     const payload = req.body || {};
+    const nowIso = new Date().toISOString();
+    const timestamp = payload.timestamp ?? nowIso;
+    const date = payload.date ?? (typeof timestamp === 'string' ? timestamp.slice(0,10) : nowIso.slice(0,10));
     const entry = {
+      timestamp,
+      date,
       case: payload.case ?? null,
       checklist: {
         main: payload?.checklist?.main ?? {},

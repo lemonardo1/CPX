@@ -219,7 +219,8 @@
             <button id="startPauseBtn" class="primary" aria-pressed="false">시작</button>
             <button id="finishSaveBtn" aria-label="종료 및 저장">종료</button>
             <button id="resetBtn" aria-label="리셋">리셋</button>
-            <button id="exportJsonBtn" aria-label="JSON 내보내기">내보내기(JSON)</button>
+            <button id="exportJsonBtn" aria-label="JSON 내보내기"></button>
+            <button id="statsBtn" aria-label="통계">통계</button>
         </div>
         <div class="case-select" aria-label="증례 선택 구역">
             <label for="caseSelect" class="title">증례 선택</label>
@@ -251,6 +252,7 @@
             const subChecklistSection = document.getElementById('subChecklistSection');
             const subChecklistGrid = document.getElementById('subChecklistGrid');
             const exportJsonBtn = document.getElementById('exportJsonBtn');
+            const statsBtn = document.getElementById('statsBtn');
             let savedChecklist = {};
             let CASES = [];
             let CASES_BY_ID = {};
@@ -391,6 +393,11 @@
             resetBtn.addEventListener('click', reset);
             finishSaveBtn.addEventListener('click', finishAndSave);
             exportJsonBtn.addEventListener('click', exportSessionsJson);
+            if (statsBtn) {
+                statsBtn.addEventListener('click', () => {
+                    window.location.href = '/stats.html';
+                });
+            }
 
             document.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'visible') updateDisplay();
@@ -475,7 +482,15 @@
                         { id: '48', title: '황달', category: '소화기', subChecklist: [] }
                     ];
                     CATEGORY_SUB_CHECKLISTS = {
-                        '소화기': ['소화불량', '속쓰림', '혈변', '지압변', '황달']
+                        '소화기': ['소화불량', '속쓰림', '혈변', '지압변', '황달'],
+                        '순환기': ['가슴통증', '두근거림', '호흡곤란', '부종', '운동시악화'],
+                        '호흡기': ['기침', '가래', '호흡곤란', '객혈', '천명'],
+                        '신장비뇨': ['빈뇨', '절박뇨', '야간뇨', '배뇨통', '혈뇨'],
+                        '전신': ['발열', '피로', '체중감소', '식욕부진', '야간발한'],
+                        '근골격/관절': ['통증', '부기', '운동제한', '아침강직', '열감'],
+                        '정신/신경': ['우울', '불안', '불면', '두통', '기억력저하'],
+                        '여성/소아': ['월경이상', '월경통', '질출혈', '질분비물', '임신가능성'],
+                        '상담': ['금연상담', '음주상담', '약물남용', '가정폭력', '성폭력']
                     };
                 }
                 // Sort by category order, then by title
@@ -640,9 +655,11 @@
                 const caseIndex = caseObj ? (CASES.findIndex(c => c.id === caseObj.id) + 1) : null;
                 const caseLabel = caseObj ? caseObj.title : null;
                 const subChecklistState = caseObj ? (subChecklistStateByCaseId[caseObj.id] || {}) : {};
+                const nowIso = new Date().toISOString();
                 const session = {
                     id: Date.now(),
-                    timestamp: new Date().toISOString(),
+                    timestamp: nowIso,
+                    date: nowIso.slice(0,10),
                     elapsedSeconds,
                     remainingSeconds,
                     checklist: savedChecklist || {},
@@ -661,6 +678,8 @@
                 // Send final checked items to local log endpoint; fallback to download
                 try {
                     const exportData = {
+                        timestamp: nowIso,
+                        date: nowIso.slice(0,10),
                         case: caseLabel || null,
                         checklist: {
                             main: savedChecklist || {},
