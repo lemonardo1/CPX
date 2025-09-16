@@ -1,0 +1,70 @@
+{
+  "토혈": {
+    "문진": [
+      "NSAID 복용 여부",
+      "구토 vs 기침 구분",
+      "항응고제 복용 여부",
+      "간질환 병력"
+    ],
+    "PE": [
+      "Vital signs",
+      "General appearance",
+      "HEENT",
+      "Neck",
+      "Chest",
+      "Heart",
+      "Abdomen"
+    ],
+    "감별진단": [
+      "NSAID induced gastritis",
+      "소화성 궤양",
+      "위암"
+    ],
+    "Plan": [
+      "위내시경",
+      "H. pylori 검사",
+      "NSAID 중단",
+      "PPI 치료"
+    ]
+  },
+  "배뇨 이상": {
+    "문진": [
+      "배뇨 통증",
+      "빈뇨/절박뇨",
+      "야간뇨",
+      "성접촉력"
+    ],
+    "PE": [
+      "Vital signs",
+      "General appearance",
+      "HEENT",
+      "Neck",
+      "Chest",
+      "Heart",
+      "Abdomen",
+      "Extremities",
+      "Neurologic"
+    ],
+    "감별진단": [
+      "임질",
+      "클라미디아 요도염"
+    ],
+    "Plan": [
+      "요도 도말 검사",
+      "PCR 검사",
+      "항생제 치료",
+      "성접촉자 검사"
+    ]
+  },
+  "붉은색 소변": {
+    "문진": [
+      "소변 - 피떡 / 거품 / 냄새",
+      "C - 빈뇨 절박뇨 야간뇨 배뇨통",
+      "A - 요도 분비물 가려움",
+      "A - 최근 감기 기운"
+    ],
+    "PE": [],
+    "감별진단": [],
+    "Plan": []
+  }
+}
