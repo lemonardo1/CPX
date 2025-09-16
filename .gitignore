@@ -1,2 +1,4 @@
 node_modules
+
 sessions.json
+data/sessions.json
