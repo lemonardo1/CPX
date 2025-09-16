@@ -35,6 +35,7 @@ class StatsApp {
         this.renderCaseStats();
         this.renderChecklistStats();
         this.renderRecentSessions();
+        this.renderSessionNotes();
     }
 
     renderBasicStats() {
@@ -142,6 +143,44 @@ class StatsApp {
         });
     }
 
+    renderSessionNotes() {
+        const container = document.getElementById('sessionNotesList');
+        container.innerHTML = '';
+
+        // 시험 기록이 있는 세션만 필터링
+        const sessionsWithNotes = this.sessions
+            .filter(session => session.notes && session.notes.trim())
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        if (sessionsWithNotes.length === 0) {
+            container.innerHTML = '<div class="session-note-empty">아직 시험 기록이 없습니다.</div>';
+            return;
+        }
+
+        sessionsWithNotes.forEach(session => {
+            const caseItem = this.cases.find(c => c.id == session.caseId);
+            const div = document.createElement('div');
+            div.className = 'session-note-item';
+            
+            // 기록 내용이 긴 경우 접기/펼치기 기능
+            const isLongNote = session.notes.length > 200;
+            const displayContent = isLongNote ? session.notes.substring(0, 200) + '...' : session.notes;
+            
+            div.innerHTML = `
+                <div class="session-note-header">
+                    <div class="session-note-title">${caseItem ? caseItem.title : '알 수 없음'}</div>
+                    <div class="session-note-time">${new Date(session.timestamp).toLocaleString()}</div>
+                </div>
+                <div class="session-note-content ${isLongNote ? '' : 'expanded'}" data-full-content="${session.notes.replace(/"/g, '&quot;')}">
+                    ${displayContent}
+                </div>
+                ${isLongNote ? '<button class="session-note-toggle" onclick="toggleNote(this)">더 보기</button>' : ''}
+            `;
+            
+            container.appendChild(div);
+        });
+    }
+
     renderCharts() {
         this.renderTimeChart();
     }
@@ -199,7 +238,7 @@ class StatsApp {
     }
 
     generateCSV() {
-        const headers = ['날짜', '시간', '증례ID', '증례명', '소요시간(분)', '완료여부'];
+        const headers = ['날짜', '시간', '증례ID', '증례명', '소요시간(분)', '완료여부', '시험기록'];
         const rows = this.sessions.map(session => {
             const caseItem = this.cases.find(c => c.id == session.caseId);
             const date = new Date(session.timestamp);
@@ -211,7 +250,8 @@ class StatsApp {
                 session.caseId || '',
                 caseItem ? caseItem.title : '',
                 Math.round(session.timeUsed / 60),
-                isCompleted ? '완료' : '미완료'
+                isCompleted ? '완료' : '미완료',
+                session.notes ? session.notes.replace(/"/g, '""') : ''
             ];
         });
 
@@ -242,6 +282,26 @@ function exportToCSV() {
 
 function exportToJSON() {
     statsApp.exportToJSON();
+}
+
+function toggleNote(button) {
+    const contentDiv = button.previousElementSibling;
+    const isExpanded = contentDiv.classList.contains('expanded');
+    
+    if (isExpanded) {
+        // 접기
+        const fullContent = contentDiv.getAttribute('data-full-content');
+        const shortContent = fullContent.substring(0, 200) + '...';
+        contentDiv.textContent = shortContent;
+        contentDiv.classList.remove('expanded');
+        button.textContent = '더 보기';
+    } else {
+        // 펼치기
+        const fullContent = contentDiv.getAttribute('data-full-content');
+        contentDiv.textContent = fullContent;
+        contentDiv.classList.add('expanded');
+        button.textContent = '접기';
+    }
 }
 
 // 앱 시작

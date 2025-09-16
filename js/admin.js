@@ -42,6 +42,33 @@ class AdminApp {
             e.preventDefault();
             this.goToExam();
         });
+
+        // 엔터 키 이벤트 리스너 추가
+        this.setupEnterKeyListeners();
+    }
+
+    setupEnterKeyListeners() {
+        // 각 입력 필드에 엔터 키 이벤트 리스너 추가
+        const inputMappings = [
+            { id: 'newInterviewItem', type: 'interview' },
+            { id: 'newPEItem', type: 'pe' },
+            { id: 'newDDxItem', type: 'ddx' },
+            { id: 'newPlanItem', type: 'plan' }
+        ];
+
+        inputMappings.forEach(({ id, type }) => {
+            const input = document.getElementById(id);
+            if (input && !input.hasAttribute('data-enter-listener')) {
+                input.setAttribute('data-enter-listener', 'true');
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.addItem(type, input.value);
+                        input.value = '';
+                    }
+                });
+            }
+        });
     }
 
     handleUrlParams() {
@@ -131,6 +158,9 @@ class AdminApp {
         this.renderItemList('planList', caseData.Plan || [], 'plan');
         
         document.getElementById('checklistEditor').style.display = 'block';
+        
+        // 새 항목 입력 필드에 엔터 키 이벤트 다시 설정
+        this.setupEnterKeyListeners();
     }
 
     renderItemList(containerId, items, type) {
@@ -144,6 +174,21 @@ class AdminApp {
                 <input type="text" value="${item}" data-index="${index}" data-type="${type}">
                 <button onclick="removeItem('${type}', ${index})">삭제</button>
             `;
+            
+            // 입력 필드에 이벤트 리스너 추가
+            const input = div.querySelector('input');
+            input.addEventListener('blur', () => {
+                this.updateItem(type, index, input.value);
+            });
+            
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.updateItem(type, index, input.value);
+                    input.blur(); // 포커스 해제
+                }
+            });
+            
             container.appendChild(div);
         });
     }
@@ -240,26 +285,34 @@ let adminApp;
 
 function addInterviewItem() {
     const input = document.getElementById('newInterviewItem');
-    adminApp.addItem('interview', input.value);
-    input.value = '';
+    if (input && input.value.trim()) {
+        adminApp.addItem('interview', input.value);
+        input.value = '';
+    }
 }
 
 function addPEItem() {
     const input = document.getElementById('newPEItem');
-    adminApp.addItem('pe', input.value);
-    input.value = '';
+    if (input && input.value.trim()) {
+        adminApp.addItem('pe', input.value);
+        input.value = '';
+    }
 }
 
 function addDDxItem() {
     const input = document.getElementById('newDDxItem');
-    adminApp.addItem('ddx', input.value);
-    input.value = '';
+    if (input && input.value.trim()) {
+        adminApp.addItem('ddx', input.value);
+        input.value = '';
+    }
 }
 
 function addPlanItem() {
     const input = document.getElementById('newPlanItem');
-    adminApp.addItem('plan', input.value);
-    input.value = '';
+    if (input && input.value.trim()) {
+        adminApp.addItem('plan', input.value);
+        input.value = '';
+    }
 }
 
 function removeItem(type, index) {

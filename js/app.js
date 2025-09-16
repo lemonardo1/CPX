@@ -294,6 +294,9 @@ class CPXApp {
         this.updateTimerDisplay();
         this.updateButtonStates();
         this.clearAllChecklists();
+        
+        // 시험 기록 텍스트 영역 초기화
+        document.getElementById('sessionNotes').value = '';
     }
 
     completeTimer() {
@@ -356,13 +359,17 @@ class CPXApp {
             this.pauseTimer();
         }
         
+        // 시험 기록 가져오기
+        const sessionNotes = document.getElementById('sessionNotes').value.trim();
+        
         const session = {
             id: Date.now(),
             timestamp: new Date().toISOString(),
             caseId: this.currentCase?.id,
             caseTitle: this.currentCase?.title,
             timeUsed: 12 * 60 - this.timeLeft,
-            checklists: this.checklists
+            checklists: this.checklists,
+            notes: sessionNotes || null
         };
         
         this.sessions.push(session);

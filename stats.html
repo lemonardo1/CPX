@@ -202,6 +202,83 @@
         .export-json:hover {
             background: #5a6268;
         }
+        
+        .session-notes-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .session-note-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+        
+        .session-note-item:hover {
+            background: #e9ecef;
+            border-color: #212529;
+        }
+        
+        .session-note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .session-note-title {
+            font-weight: 600;
+            color: #212529;
+            font-size: 0.9rem;
+        }
+        
+        .session-note-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .session-note-content {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #495057;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .session-note-content.expanded {
+            max-height: none;
+        }
+        
+        .session-note-toggle {
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+        
+        .session-note-toggle:hover {
+            background: #dee2e6;
+            color: #212529;
+        }
+        
+        .session-note-empty {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
@@ -287,6 +364,14 @@
             <h3>최근 연습 세션</h3>
             <div class="recent-sessions" id="recentSessions">
                 <!-- 최근 세션이 여기에 표시됩니다 -->
+            </div>
+        </div>
+
+        <!-- 시험 기록 -->
+        <div class="stats-card">
+            <h3>시험 기록</h3>
+            <div class="session-notes-list" id="sessionNotesList">
+                <!-- 시험 기록이 여기에 표시됩니다 -->
             </div>
         </div>
 
