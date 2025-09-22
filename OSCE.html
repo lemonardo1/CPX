@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPX OSCE</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="/Coffee.png" type="image/png" sizes="48x48">
+</head>
+<body>
+    <!-- 사이드바 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>CPX</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-btn">
+                <span class="icon">📝</span>
+                <span class="text">시험</span>
+            </a>
+            <a href="OSCE.html" class="sidebar-btn active">
+                <span class="icon">🏥</span>
+                <span class="text">OSCE</span>
+            </a>
+            <a href="admin.html" class="sidebar-btn">
+                <span class="icon">⚙️</span>
+                <span class="text">관리</span>
+            </a>
+            <a href="stats.html" class="sidebar-btn">
+                <span class="icon">📊</span>
+                <span class="text">통계</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <header class="header">
+                <h1>OSCE</h1>
+            </header>
+
+            <!-- 상단 탭 -->
+            <div class="osce-tabs" role="tablist" aria-label="OSCE 항목 선택">
+                <button class="osce-tab-button active" role="tab" aria-selected="true" data-skill="상처관리">상처관리</button>
+                <button class="osce-tab-button" role="tab" aria-selected="false" data-skill="응급처치">응급처치</button>
+                <button class="osce-tab-button" role="tab" aria-selected="false" data-skill="동맥혈 채혈 및 안전수혈술기">동맥혈 채혈 및 안전수혈술기</button>
+                <button class="osce-tab-button" role="tab" aria-selected="false" data-skill="혈액배양 채혈 및 안전수혈술기">혈액배양 채혈 및 안전수혈술기</button>
+            </div>
+
+            <!-- 좌/우 분할 레이아웃 -->
+            <div class="osce-split">
+                <div class="osce-left">
+                    <div class="osce-media-panel osce-panel">
+                        <div class="osce-media">
+                            <img id="osceImage" alt="OSCE 관련 이미지" />
+                        </div>
+                        <div class="osce-exam-note">
+                            <h3 class="osce-exam-title">시험 문구</h3>
+                            <p id="osceExamText" class="osce-exam-text">예시 문구: 시작 전 환자 확인과 손위생을 시행한다. 시술 설명과 동의를 구한다. 필요한 준비물을 확인한다.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="osce-right">
+                    <div class="osce-panel" id="osceSidePanel">
+                        <h3 style="margin-bottom: 10px; font-size: 1rem; color: #212529;">체크리스트</h3>
+                        <div id="osceChecklist" class="osce-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/osce.js"></script>
+</body>
+</html>
+

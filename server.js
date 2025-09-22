@@ -335,7 +335,8 @@ app.get('/stats', (req, res) => {
 // 서버 시작
 app.listen(PORT, () => {
     console.log(`CPX 서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
-    console.log(`시험: http://localhost:${PORT}`);
-    console.log(`관리: http://localhost:${PORT}/admin`);
-    console.log(`통계: http://localhost:${PORT}/stats`);
+    console.log(`시험: http://localhost:${PORT}/index.html`);
+    console.log(`OSCE: http://localhost:${PORT}/OSCE.html`);
+    console.log(`관리: http://localhost:${PORT}/admin.html`);
+    console.log(`통계: http://localhost:${PORT}/stats.html`);
 });
