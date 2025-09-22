@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPX 관리</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .admin-header {
+            text-align: center;
+            margin-bottom: 20px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 6px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 12px 18px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            color: #6c757d;
+        }
+        
+        .tab-button.active {
+            background: #212529;
+            color: #ffffff;
+        }
+        
+        .tab-content {
+            display: none;
+            background: #ffffff;
+            padding: 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .case-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .case-card {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #ffffff;
+        }
+        
+        .case-card:hover {
+            border-color: #212529;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .case-card.selected {
+            border-color: #212529;
+            background: #f8f9fa;
+        }
+        
+        .case-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #212529;
+        }
+        
+        .case-category {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+        
+        .checklist-editor {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .editor-section {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            background: #ffffff;
+        }
+        
+        .editor-section h3 {
+            margin-bottom: 12px;
+            color: #212529;
+            border-bottom: 2px solid #212529;
+            padding-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .item-input {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .item-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .item-input button {
+            padding: 8px 12px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .add-item {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .add-item input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .add-item button {
+            padding: 8px 14px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .save-button {
+            background: #212529;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s ease;
+        }
+        
+        .save-button:hover {
+            background: #000000;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .item-list {
+            position: relative;
+        }
+
+        .insert-button {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #28a745;
+            color: white;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .insert-button:hover {
+            background: #218838;
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .item-input:hover + .insert-button {
+            opacity: 1;
+        }
+
+        .insert-button:hover {
+            opacity: 1;
+        }
+
+        .insert-input {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            padding: 8px 12px;
+            border: 2px solid #28a745;
+            border-radius: 6px;
+            font-size: 12px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 20;
+        }
+
+        .insert-input:focus {
+            outline: none;
+            border-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <!-- 사이드바 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>CPX</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-btn">
+                <span class="icon">📝</span>
+                <span class="text">시험</span>
+            </a>
+            <a href="admin.html" class="sidebar-btn active">
+                <span class="icon">⚙️</span>
+                <span class="text">관리</span>
+            </a>
+            <a href="stats.html" class="sidebar-btn">
+                <span class="icon">📊</span>
+                <span class="text">통계</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="admin-container">
+            <!-- 헤더 -->
+            <div class="admin-header">
+                <h1 style="font-size: 1.5rem; margin-bottom: 8px;">CPX 관리</h1>
+                <p style="font-size: 0.9rem; margin: 0;">증례별 체크리스트 항목을 관리할 수 있습니다.</p>
+            </div>
+
+        <!-- 탭 네비게이션 -->
+        <div class="admin-tabs">
+            <button class="tab-button active" data-tab="cases">증례 관리</button>
+            <button class="tab-button" data-tab="checklists">체크리스트 관리</button>
+        </div>
+
+        <!-- 증례 관리 탭 -->
+        <div id="cases-tab" class="tab-content active">
+            <h2>증례 목록</h2>
+            <div class="case-list" id="caseList">
+                <!-- 증례 카드들이 여기에 동적으로 생성됩니다 -->
+            </div>
+        </div>
+
+        <!-- 체크리스트 관리 탭 -->
+        <div id="checklists-tab" class="tab-content">
+            <h2>체크리스트 관리</h2>
+            <div id="checklistEditor" style="display: none;">
+                <h3 id="selectedCaseTitle">선택된 증례</h3>
+                
+                <div class="checklist-editor">
+                    <!-- 문진 체크리스트 -->
+                    <div class="editor-section">
+                        <h3>문진 체크리스트</h3>
+                        <div class="item-list" id="interviewList">
+                            <!-- 문진 항목들이 여기에 표시됩니다 -->
+                        </div>
+                        <div class="add-item">
+                            <input type="text" id="newInterviewItem" placeholder="새 문진 항목 추가">
+                            <button onclick="addInterviewItem()">추가</button>
+                        </div>
+                    </div>
+
+                    <!-- P/E 체크리스트 -->
+                    <div class="editor-section">
+                        <h3>P/E 체크리스트</h3>
+                        <div class="item-list" id="peList">
+                            <!-- P/E 항목들이 여기에 표시됩니다 -->
+                        </div>
+                        <div class="add-item">
+                            <input type="text" id="newPEItem" placeholder="새 P/E 항목 추가">
+                            <button onclick="addPEItem()">추가</button>
+                        </div>
+                    </div>
+
+                    <!-- 감별진단 -->
+                    <div class="editor-section">
+                        <h3>감별진단</h3>
+                        <div class="item-list" id="ddxList">
+                            <!-- 감별진단 항목들이 여기에 표시됩니다 -->
+                        </div>
+                        <div class="add-item">
+                            <input type="text" id="newDDxItem" placeholder="새 감별진단 추가">
+                            <button onclick="addDDxItem()">추가</button>
+                        </div>
+                    </div>
+
+                    <!-- Plan -->
+                    <div class="editor-section">
+                        <h3>Plan</h3>
+                        <div class="item-list" id="planList">
+                            <!-- Plan 항목들이 여기에 표시됩니다 -->
+                        </div>
+                        <div class="add-item">
+                            <input type="text" id="newPlanItem" placeholder="새 Plan 항목 추가">
+                            <button onclick="addPlanItem()">추가</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="save-button" onclick="saveChecklist()">저장</button>
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
